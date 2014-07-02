@@ -9,6 +9,12 @@ class UploadController < ApplicationController
   end
 
   def saveFile(upload)
-    file = DataFile.save(upload['datafile'].original_filename, upload['datafile'].read)
+    datafile = upload['datafile']
+    if datafile.is_a?(Array)
+      
+      datafile.each { |df| DataFile.save(df.original_filename, df.read) }
+    else
+      file = DataFile.save(datafile.original_filename, datafile.read)
+    end
   end
 end
