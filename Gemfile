@@ -31,4 +31,5 @@ gem 'sdoc', '~> 0.4.0',                                 group: :doc
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-
+# Enables AJAX file uploads with jQuery
+gem 'remotipart', '~> 1.2'
