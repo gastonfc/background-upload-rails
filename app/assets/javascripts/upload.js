@@ -4,23 +4,23 @@ $(function () {
     n.html(n.html() + "<p>" + file.name + " (" + file.type + ") size: " + file.size + " bytes</p>");
   }
 
-  function FileDragHover(e) {
-    e.stopPropagation();
+  function fileDragHover(e) {
     e.preventDefault();
+    e.stopPropagation();
     $(e.target)[(e.type === "dragover" ? "addClass" : "removeClass")]("hover");
   }
 
   function initForm(form) {
     var fileselect = $(".filefield", form),
-        filedragjq = $(".filedrag", form),
+        filedrag = $(".filedrag", form),
         submitbutton = $(".submit", form);
 
     function fileSelectHandler(e) {
       // cancel event and hover styling
-      FileDragHover(e);
+      fileDragHover(e);
 
       // fetch FileList object
-      var files = e.target.files || e.dataTransfer.files;
+      var files = e.target.files || e.originalEvent.dataTransfer.files;
 
       // process all File objects
       for (var i = 0, f; f = files[i]; i++) {
@@ -32,13 +32,12 @@ $(function () {
     // is XHR2 available?
     var xhr = new XMLHttpRequest();
     if (xhr.upload) {
-      var filedrag = filedragjq.get(0);
 
       // file drop
-      filedrag.addEventListener("dragover", FileDragHover, false);
-      filedrag.addEventListener("dragleave", FileDragHover, false);
-      filedrag.addEventListener("drop", fileSelectHandler, false);
-      filedrag.style.display = "block";
+      filedrag.on("dragover", fileDragHover);
+      filedrag.on("dragleave", fileDragHover);
+      filedrag.on("drop", fileSelectHandler);
+      filedrag.show();
 
       // remove submit button
       submitbutton.hide();
