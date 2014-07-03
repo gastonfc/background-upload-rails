@@ -1,7 +1,44 @@
 $(function () {
   function showFile(file, cont) {
-    var n = $(".messages", cont);
-    n.html(n.html() + "<p>" + file.name + " (" + file.type + ") size: " + file.size + " bytes</p>");
+    var uploadcont = $("<div>");
+
+    $("<div>")
+      .addClass("info")
+      .html(file.name + " (" + file.type + ") size: " + file.size + " bytes")
+      .appendTo(uploadcont);
+    $("<div>")
+      .addClass("progressbar")
+      .appendTo(uploadcont).append($("<div>&nbsp;</div>"));
+
+    return uploadcont.appendTo($(".uploads", cont));
+  }
+
+  function getFileProgressBar(cont) {
+    return $(".progressbar div", cont);
+  }
+
+  function sendFile(url, file, cont) {
+    var pbar = getFileProgressBar(cont);
+
+    $.ajax({
+      type: "post",
+      url: url,
+      data: file,
+      success: function () {
+        pbar.addClass("success").width("100%");
+      },
+      error: function () {
+        pbar.addClass("failed").width("100%");
+      },
+      xhrFields: {
+        onprogress: function (progress) {
+          var percentage = Math.floor((progress.total / progress.totalSize) * 100);
+          pbar.width(percentage + "%");
+        }
+      },
+      processData: false,
+      contentType: file.type
+   });
   }
 
   function fileDragHover(e) {
@@ -13,9 +50,11 @@ $(function () {
   function initForm(form) {
     var fileselect = $(".filefield", form),
         filedrag = $(".filedrag", form),
-        submitbutton = $(".submit", form);
+        submitbutton = $(".submit", form),
+        url = form.attr("action");
 
     function fileSelectHandler(e) {
+      var filecont;
       // cancel event and hover styling
       fileDragHover(e);
 
@@ -24,7 +63,8 @@ $(function () {
 
       // process all File objects
       for (var i = 0, f; f = files[i]; i++) {
-        showFile(f, form);
+        filecont = showFile(f, form);
+        sendFile(url, f, filecont);
       }
     }
     fileselect.on("change", fileSelectHandler);
