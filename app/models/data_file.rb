@@ -6,5 +6,7 @@ class DataFile < ActiveRecord::Base
     path = File.join(directory, name)
 
     File.open(path, "wb") { |f| f.write(content) }
+
+    return name
   end
 end

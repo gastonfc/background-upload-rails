@@ -7,9 +7,9 @@ class UploadController < ApplicationController
     saveFiles(params[:upload])
 
     respond_to do |format|
-      format.json { render json: "File was created", status: :created }
-      format.js {}
       format.html { render text: "File has been uploaded successfully" }
+      format.js { }
+      format.json { render json: "File was created", status: :created }
     end
     #if remotipart_submitted?
       #puts "Remotipart submitted"
@@ -22,9 +22,9 @@ class UploadController < ApplicationController
   def saveFiles(upload)
     datafile = upload['datafile']
     if datafile.is_a?(Array)
-      datafile.each { |df| DataFile.save(df.original_filename, df.read) }
+      @files = datafile.map { |df| DataFile.save(df.original_filename, df.read) }
     else
-      file = DataFile.save(datafile.original_filename, datafile.read)
+      @files = [DataFile.save(datafile.original_filename, datafile.read)]
     end
   end
 end
