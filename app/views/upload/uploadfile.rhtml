@@ -1,6 +1,8 @@
 <h1>File Upload</h1>
-<%= form_tag({:action => 'uploadFile'}, :multipart => true, :remote => true ) do %>
+<%= form_tag({:action => 'uploadFile'}, :class => "autoupload", :multipart => true, :remote => true ) do %>
   <p><label for="upload_file">Select File</label> : 
-  <%= file_field 'upload', 'datafile', :multiple => true%></p>
+  <%= file_field 'upload', 'datafile', :multiple => true, :class => "filefield"%></p>
   <%= submit_tag "Upload" %>
+  <div class="filedrag">drop files here</div>
+  <div class="messages"></div>
 <% end %>
