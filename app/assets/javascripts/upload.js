@@ -23,26 +23,32 @@ $(function () {
 
     data.append("datafile", file);
 
-    $.ajax({
-      type: "post",
-      url: url,
-      data: data,
-      success: function () {
-        pbar.addClass("success").width("100%");
-      },
-      error: function () {
-        pbar.addClass("failed").width("100%");
-      },
-      xhrFields: {
-        onprogress: function (progress) {
+    var xhr = new XMLHttpRequest();
+    if (xhr.upload) {
+
+        xhr.upload.addEventListener("progress", function (progress) {
           console.log("progress", file.name, progress);
-          var percentage = Math.floor((progress.total / progress.totalSize) * 100);
+          var percentage = Math.floor((progress.loaded / progress.total) * 100);
           pbar.width(percentage + "%");
+          console.log(percentage);
+        });
+        xhr.onreadystatechange = function (e) {
+          if (xhr.readyState == 4) {
+            if (xhr.status == 200) {
+              pbar.addClass("success").width("100%");
+            } else {
+              pbar.addClass("failed").width("100%");
+            }
+          }
         }
-      },
-      processData: false,
-      contentType: false
-   });
+        xhr.open("POST", url, true);
+        // xhr.setRequestHeader("X_FILENAME", file.name);
+        // Add csrf token for Rails
+        var token = $('meta[name="csrf-token"]').attr('content');
+        console.log('Token', token);
+        xhr.setRequestHeader("X-CSRF-Token", token);
+        xhr.send(data);
+    }
   }
 
   function fileDragHover(e) {
