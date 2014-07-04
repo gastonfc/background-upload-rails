@@ -8,7 +8,7 @@ $(function () {
       .appendTo(uploadcont);
     $("<div>")
       .addClass("progressbar")
-      .appendTo(uploadcont).append($("<div>&nbsp;</div>"));
+      .appendTo(uploadcont).append($("<div>"));
 
     return uploadcont.appendTo($(".uploads", cont));
   }
@@ -42,7 +42,6 @@ $(function () {
           }
         }
         xhr.open("POST", url, true);
-        // xhr.setRequestHeader("X_FILENAME", file.name);
         // Add csrf token for Rails
         var token = $('meta[name="csrf-token"]').attr('content');
         console.log('Token', token);
