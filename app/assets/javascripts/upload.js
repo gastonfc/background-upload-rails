@@ -18,12 +18,15 @@ $(function () {
   }
 
   function sendFile(url, file, cont) {
-    var pbar = getFileProgressBar(cont);
+    var pbar = getFileProgressBar(cont),
+        data = new FormData();
+
+    data.append("datafile", file);
 
     $.ajax({
       type: "post",
       url: url,
-      data: file,
+      data: data,
       success: function () {
         pbar.addClass("success").width("100%");
       },
@@ -32,12 +35,13 @@ $(function () {
       },
       xhrFields: {
         onprogress: function (progress) {
+          console.log("progress", file.name, progress);
           var percentage = Math.floor((progress.total / progress.totalSize) * 100);
           pbar.width(percentage + "%");
         }
       },
       processData: false,
-      contentType: file.type
+      contentType: false
    });
   }
 

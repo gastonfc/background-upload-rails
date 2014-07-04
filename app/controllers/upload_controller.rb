@@ -4,7 +4,8 @@ class UploadController < ApplicationController
   end
 
   def uploadFile
-    saveFiles(params[:upload])
+
+    saveFiles(params[:upload] || params)
 
     respond_to do |format|
       format.html { render text: "File has been uploaded successfully" }
